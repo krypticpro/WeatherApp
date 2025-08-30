@@ -1,6 +1,33 @@
-.main {
+body {
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#container {
+  height: 100vh;
   display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-content: flex-end;
+}
+
+#main {
+  display: flex;
+  padding: 5rem;
   flex-flow: column nowrap;
   justify-content: center;
   align-items: center;
+  opacity: 60%;
+  background-image: linear-gradient(
+    rgb(0, 132, 255),
+    rgb(0, 218, 199),
+    rgb(0, 218, 199),
+    yellow
+  );
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  margin: auto;
+  margin-bottom: 0;
+  width: fit-content;
+  height: fit-content;
 }
