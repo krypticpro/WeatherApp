@@ -6,9 +6,9 @@ body {
 #container {
   height: 100vh;
   display: flex;
-  flex-flow: row wrap;
-  justify-content: center;
-  align-content: flex-end;
+  flex-flow: column wrap;
+  justify-content: flex-end;
+  align-content: center;
 }
 
 #main {
@@ -26,8 +26,17 @@ body {
   );
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
-  margin: auto;
+  margin: 20px auto;
   margin-bottom: 0;
+  justify-self: flex-end;
   width: fit-content;
   height: fit-content;
+}
+
+#location {
+  text-align: center;
+  border: 2px solid black;
+  border-radius: 5px;
+  padding: 20px 0px;
+  width: 100%;
 }

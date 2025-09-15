@@ -3,6 +3,7 @@ const feel = document.getElementById("feel");
 const city = document.getElementById("city");
 const desc = document.getElementById("desc");
 const icon = document.querySelector("#icon > img");
+const locSelect = document.querySelector("#location");
 
 function capitalizeWords(string) {
   const words = string.split(" ");
@@ -54,7 +55,8 @@ async function getWeatherData(URL) {
     city.innerHTML = `${data.name}`;
     desc.innerHTML = `${capitalizeWords(data.weather[0].description)}`;
   } catch (error) {
-    return console.error(error);
+    clearInterval(weatherUpdate);
+    console.error(error);
   }
 }
 
@@ -62,10 +64,44 @@ getWeatherData(
   "https://api.openweathermap.org/data/2.5/weather?q=Saskatoon&units=metric&appid=cd7cf846784f6e5c6eb7118f9a8f8e37"
 );
 
-setInterval(
-  () =>
-    getWeatherData(
-      "https://api.openweathermap.org/data/2.5/weather?q=Saskatoon&units=metric&appid=cd7cf846784f6e5c6eb7118f9a8f8e37"
-    ),
-  1500
-);
+let weatherUpdate = setInterval(() => {
+  getWeatherData(
+    "https://api.openweathermap.org/data/2.5/weather?q=Saskatoon&units=metric&appid=cd7cf846784f6e5c6eb7118f9a8f8e37"
+  );
+}, 1000);
+
+let activeIntervals = new Set();
+
+function updateWeather(city) {
+  const intervalId = setInterval(() => {
+    try {
+      getWeatherData(
+        `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=cd7cf846784f6e5c6eb7118f9a8f8e37`
+      );
+    } catch (e) {
+      console.error("dumbass", e.message);
+    }
+  }, 1000);
+  activeIntervals.add(intervalId);
+}
+
+locSelect.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    let city = e.target.value;
+    clearInterval(weatherUpdate);
+    if (e.target.value.trim()) {
+      console.log("hello");
+      if (activeIntervals.size) {
+        for (const id of activeIntervals) {
+          clearInterval(id);
+        }
+      }
+    }
+    updateWeather(city);
+    // try {
+    // } catch (e) {
+    //   console.error("invalid city name");
+    //   locSelect.value = "Invalid City Name";
+    // }
+  }
+});
