@@ -58,8 +58,8 @@ async function getWeatherData(URL) {
   } else {
     for (const id of activeIntervals) {
       clearInterval(id);
-      console.log("why andrew...");
     }
+    icon.src = "./assets/weathericons/sad-face.png";
     temp.innerHTML = null;
     city.innerHTML = "Invalid City Request";
     feel.innerHTML = "(Please Enter a Valid City)";
