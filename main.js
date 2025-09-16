@@ -67,16 +67,6 @@ async function getWeatherData(URL) {
   }
 }
 
-// getWeatherData(
-//   "https://api.openweathermap.org/data/2.5/weather?q=Saskatoon&units=metric&appid=cd7cf846784f6e5c6eb7118f9a8f8e37"
-// );
-
-// let weatherUpdate = setInterval(() => {
-//   getWeatherData(
-//     "https://api.openweathermap.org/data/2.5/weather?q=Saskatoon&units=metric&appid=cd7cf846784f6e5c6eb7118f9a8f8e37"
-//   );
-// }, 1000);
-
 async function updateWeather(city = "Saskatoon") {
   const intervalId = setInterval(() => {
     getWeatherData(
