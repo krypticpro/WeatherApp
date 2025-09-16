@@ -4,6 +4,7 @@ const city = document.getElementById("city");
 const desc = document.getElementById("desc");
 const icon = document.querySelector("#icon > img");
 const locSelect = document.querySelector("#location");
+let activeIntervals = new Set();
 
 function capitalizeWords(string) {
   const words = string.split(" ");
@@ -14,8 +15,8 @@ function capitalizeWords(string) {
 }
 
 async function getWeatherData(URL) {
-  try {
-    const response = await fetch(URL);
+  const response = await fetch(URL);
+  if (response.status === 200) {
     const data = await response.json();
     let iconId = data.weather[0].icon;
     if (iconId === "01d" || iconId === "01n") {
@@ -51,57 +52,52 @@ async function getWeatherData(URL) {
       icon.alt = "We currently don't have the image you're looking for.";
     }
     temp.innerHTML = `${data.main.temp}&deg;C`;
-    feel.innerHTML = `Feels Like: ${data.main.feels_like}&deg;C`;
     city.innerHTML = `${data.name}`;
+    feel.innerHTML = `Feels Like: ${data.main.feels_like}&deg;C`;
     desc.innerHTML = `${capitalizeWords(data.weather[0].description)}`;
-  } catch (error) {
-    clearInterval(weatherUpdate);
-    console.error(error);
+  } else {
+    for (const id of activeIntervals) {
+      clearInterval(id);
+      console.log("why andrew...");
+    }
+    temp.innerHTML = null;
+    city.innerHTML = "Invalid City Request";
+    feel.innerHTML = "(Please Enter a Valid City)";
+    desc.innerHTML = null;
   }
 }
 
-getWeatherData(
-  "https://api.openweathermap.org/data/2.5/weather?q=Saskatoon&units=metric&appid=cd7cf846784f6e5c6eb7118f9a8f8e37"
-);
+// getWeatherData(
+//   "https://api.openweathermap.org/data/2.5/weather?q=Saskatoon&units=metric&appid=cd7cf846784f6e5c6eb7118f9a8f8e37"
+// );
 
-let weatherUpdate = setInterval(() => {
-  getWeatherData(
-    "https://api.openweathermap.org/data/2.5/weather?q=Saskatoon&units=metric&appid=cd7cf846784f6e5c6eb7118f9a8f8e37"
-  );
-}, 1000);
+// let weatherUpdate = setInterval(() => {
+//   getWeatherData(
+//     "https://api.openweathermap.org/data/2.5/weather?q=Saskatoon&units=metric&appid=cd7cf846784f6e5c6eb7118f9a8f8e37"
+//   );
+// }, 1000);
 
-let activeIntervals = new Set();
-
-function updateWeather(city) {
+async function updateWeather(city = "Saskatoon") {
   const intervalId = setInterval(() => {
-    try {
-      getWeatherData(
-        `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=cd7cf846784f6e5c6eb7118f9a8f8e37`
-      );
-    } catch (e) {
-      console.error("dumbass", e.message);
-    }
+    getWeatherData(
+      `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=cd7cf846784f6e5c6eb7118f9a8f8e37`
+    );
   }, 1000);
   activeIntervals.add(intervalId);
 }
 
+updateWeather();
+
 locSelect.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
-    let city = e.target.value;
-    clearInterval(weatherUpdate);
-    if (e.target.value.trim()) {
-      console.log("hello");
+    let city = locSelect.value;
+    if (locSelect.value.trim()) {
       if (activeIntervals.size) {
         for (const id of activeIntervals) {
           clearInterval(id);
         }
       }
     }
-    updateWeather(city);
-    // try {
-    // } catch (e) {
-    //   console.error("invalid city name");
-    //   locSelect.value = "Invalid City Name";
-    // }
+    updateWeather(city).then(() => (locSelect.value = null));
   }
 });
